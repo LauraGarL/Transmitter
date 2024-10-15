@@ -33,13 +33,13 @@ SC_MODULE(TX){
 	 sc_int<9> count;
 
 	void transition(){
-		if (i_reset.read()){
+		if( i_reset.read() && i_clock.posedge()  ){
 			next_state = 0;
 			o_Req.write(0);
 			o_SoP.write(0);
 			o_fifo_pop.write(0);
 			cout<<"@"<< sc_time_stamp() <<":: Reseted IDLE "<< endl;
-		}else{
+		}else if (!i_reset.read() && i_clock.posedge() ) {
 			  switch (state.read()) {
 			  	  case 0:
 			  		  // Si hay un paquete listo (i_packetReady=1), leo los 9-bit lsb del dato en la salida de la FIFO
@@ -122,23 +122,6 @@ SC_MODULE(TX){
 		}
 					}
 
-//	void outputs() {
-//	    switch (state.read()) {
-//			case S0:
-//				{o_Req.write(0); o_SoP.write(0);} // Req en 0 en S0
-//			    break;
-//            case S1:
-//            	{o_Req.write(0); o_SoP.write(0);} // Req en 0 en S1
-//            	break;
-//            case S2:
-//            	{o_Req.write(1); o_SoP.write(1);} // Req en 0 en S2 (Req = 0 cuando pasa a S1)
-//               break;
-//            default:
-//            	{o_Req.write(0); o_SoP.write(0);} // Valor por defecto
-//             break;
-//			        }
-//			    }
-
 			    SC_CTOR(TX): //	Labeling ports
 			    	i_clock("i_clock"),					//Input: System Clock
 			    	i_reset("i_reset"),					//Input: System Reset
@@ -151,13 +134,11 @@ SC_MODULE(TX){
 			    	o_fifo_pop("o_fifo_pop")			//Output: Remove an element from  FIFO
 			    {
 			        SC_METHOD(transition);
-			        sensitive << i_clock.pos() << i_reset << i_packetReady << i_OnOff << i_fifo_empty;
+			        sensitive << i_clock.pos() << state <<i_reset << i_packetReady << i_OnOff << i_fifo_empty;
+			        //sensitive << state << i_reset << i_packetReady << i_OnOff << i_fifo_empty;
 
 			        SC_METHOD(update);
 			        sensitive << i_clock.pos() << i_reset;
-
-//			        SC_METHOD(outputs);
-//			        sensitive << state;
 			    }
 			};
 #endif /* TX_H_ */

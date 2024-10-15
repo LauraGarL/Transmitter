@@ -100,7 +100,7 @@ int sc_main(int argc, char* argv[]) {
     				i_OnOff = 0;
     				i_fifo_empty = 0;
 
-						for (int i=0; i<4; i++){
+						for (int i=0; i<5; i++){
 							i_clock = 0;
 							sc_start(10,SC_NS);
 							i_clock = 1;
