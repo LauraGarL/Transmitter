@@ -68,7 +68,7 @@ int sc_main(int argc, char* argv[]) {
     				i_fifo_empty = 1;
     				i_fifo_dataOut = 0;
 
-    				cout << "@" << sc_time_stamp() <<"\t Asserting reset ... TX\n" << endl;
+    				cout << "@" << sc_time_stamp() <<"\t Asserting reset ...TX\n" << endl;
 
     				for (int i=0; i<2; i++){
     					i_clock = 0;
