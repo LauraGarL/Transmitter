@@ -1,5 +1,5 @@
 $date
-     Oct 15, 2024       13:17:08
+     Oct 17, 2024       13:18:13
 $end
 
 $version
@@ -21,8 +21,8 @@ $var wire    1  aaaag  o_Req       $end
 $var wire    1  aaaah  o_SoP       $end
 $var wire    1  aaaai  o_fifo_pop       $end
 $var wire   32  aaaaj  state [31:0]  $end
-$var wire   32  aaaak  next_state [31:0]  $end
-$var wire    9  aaaal  count [8:0]  $end
+$var wire    9  aaaak  count [8:0]  $end
+$var wire    1  aaaal  prev_OnOff       $end
 $upscope $end
 $enddefinitions  $end
 
@@ -42,7 +42,7 @@ b0 aaaaf
 0aaaai
 b0 aaaaj
 b0 aaaak
-b0 aaaal
+0aaaal
 $end
 
 #20000
@@ -89,15 +89,14 @@ b100 aaaaf
 
 #140000
 1aaaaa
-b1 aaaak
-b100 aaaal
+b1 aaaaj
 
 #150000
 0aaaaa
 
 #160000
 1aaaaa
-b1 aaaaj
+b100 aaaak
 
 #170000
 0aaaaa
@@ -124,18 +123,16 @@ b1 aaaaj
 
 #240000
 1aaaaa
-1aaaag
-1aaaah
-b10 aaaak
-b110 aaaal
+b10 aaaaj
+1aaaal
 
 #250000
 0aaaaa
 
 #260000
 1aaaaa
-b10 aaaaj
-b1000 aaaal
+1aaaag
+1aaaah
 
 #270000
 0aaaaa
@@ -167,18 +164,17 @@ b1000 aaaal
 
 #360000
 1aaaaa
-0aaaag
-0aaaah
-b11 aaaak
-b111 aaaal
+b11 aaaaj
+b110 aaaak
+0aaaal
 
 #370000
 0aaaaa
 
 #380000
 1aaaaa
-b11 aaaaj
-b110 aaaal
+0aaaag
+0aaaah
 
 #390000
 0aaaaa
@@ -211,16 +207,17 @@ b1 aaaaf
 
 #480000
 1aaaaa
-1aaaag
-1aaaai
-b10 aaaak
+b100 aaaaj
+b101 aaaak
+1aaaal
 
 #490000
 0aaaaa
 
 #500000
 1aaaaa
-b10 aaaaj
+1aaaag
+1aaaai
 
 #510000
 0aaaaa
@@ -240,18 +237,16 @@ b10 aaaaj
 
 #560000
 1aaaaa
-0aaaag
-0aaaai
-b11 aaaak
-b101 aaaal
+b11 aaaaj
+0aaaal
 
 #570000
 0aaaaa
 
 #580000
 1aaaaa
-b11 aaaaj
-b100 aaaal
+0aaaag
+0aaaai
 
 #590000
 0aaaaa
@@ -284,16 +279,17 @@ b10 aaaaf
 
 #680000
 1aaaaa
-1aaaag
-1aaaai
-b10 aaaak
+b100 aaaaj
+b100 aaaak
+1aaaal
 
 #690000
 0aaaaa
 
 #700000
 1aaaaa
-b10 aaaaj
+1aaaag
+1aaaai
 
 #710000
 0aaaaa
@@ -313,18 +309,16 @@ b10 aaaaj
 
 #760000
 1aaaaa
-0aaaag
-0aaaai
-b11 aaaak
-b11 aaaal
+b11 aaaaj
+0aaaal
 
 #770000
 0aaaaa
 
 #780000
 1aaaaa
-b11 aaaaj
-b10 aaaal
+0aaaag
+0aaaai
 
 #790000
 0aaaaa
@@ -357,16 +351,17 @@ b11 aaaaf
 
 #880000
 1aaaaa
-1aaaag
-1aaaai
-b10 aaaak
+b100 aaaaj
+b11 aaaak
+1aaaal
 
 #890000
 0aaaaa
 
 #900000
 1aaaaa
-b10 aaaaj
+1aaaag
+1aaaai
 
 #910000
 0aaaaa
@@ -386,32 +381,28 @@ b10 aaaaj
 
 #960000
 1aaaaa
-0aaaag
-0aaaai
-b11 aaaak
-b1 aaaal
+b11 aaaaj
+0aaaal
 
 #970000
 0aaaaa
 
 #980000
 1aaaaa
-b11 aaaaj
-b0 aaaal
+0aaaag
+0aaaai
 
 #990000
 0aaaaa
 
 #1000000
 1aaaaa
-b0 aaaak
 
 #1010000
 0aaaaa
 
 #1020000
 1aaaaa
-b0 aaaaj
 
 #1030000
 0aaaaa
@@ -432,12 +423,17 @@ b100 aaaaf
 
 #1080000
 1aaaaa
+b100 aaaaj
+b10 aaaak
+1aaaal
 
 #1090000
 0aaaaa
 
 #1100000
 1aaaaa
+1aaaag
+1aaaai
 
 #1110000
 0aaaaa
@@ -457,12 +453,16 @@ b100 aaaaf
 
 #1160000
 1aaaaa
+b11 aaaaj
+0aaaal
 
 #1170000
 0aaaaa
 
 #1180000
 1aaaaa
+0aaaag
+0aaaai
 
 #1190000
 0aaaaa
@@ -495,12 +495,17 @@ b101 aaaaf
 
 #1280000
 1aaaaa
+b100 aaaaj
+b1 aaaak
+1aaaal
 
 #1290000
 0aaaaa
 
 #1300000
 1aaaaa
+1aaaag
+1aaaai
 
 #1310000
 0aaaaa
@@ -520,12 +525,16 @@ b101 aaaaf
 
 #1360000
 1aaaaa
+b11 aaaaj
+0aaaal
 
 #1370000
 0aaaaa
 
 #1380000
 1aaaaa
+0aaaag
+0aaaai
 
 #1390000
 0aaaaa
@@ -558,12 +567,17 @@ b110 aaaaf
 
 #1480000
 1aaaaa
+b100 aaaaj
+b0 aaaak
+1aaaal
 
 #1490000
 0aaaaa
 
 #1500000
 1aaaaa
+1aaaag
+1aaaai
 
 #1510000
 0aaaaa
@@ -583,12 +597,17 @@ b110 aaaaf
 
 #1560000
 1aaaaa
+b11 aaaaj
+0aaaal
 
 #1570000
 0aaaaa
 
 #1580000
 1aaaaa
+0aaaag
+0aaaai
+b0 aaaaj
 
 #1590000
 0aaaaa

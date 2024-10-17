@@ -28,6 +28,7 @@ SC_MODULE(TX){
 	sc_out<bool> 					o_fifo_pop;		//Output: Remove an element from  FIFO
 
 	 sc_signal<int> state, next_state;
+	 //sc_int<32> state, next_state;
 
 	 //sc_int<LOG2_N> count;
 	 sc_int<9> count;
@@ -35,11 +36,11 @@ SC_MODULE(TX){
 	void transition(){
 		if( i_reset.read() && i_clock.posedge()  ){
 			next_state = 0;
-			o_Req.write(0);
-			o_SoP.write(0);
-			o_fifo_pop.write(0);
+//			o_Req.write(0);
+//			o_SoP.write(0);
+//			o_fifo_pop.write(0);
 			cout<<"@"<< sc_time_stamp() <<":: Reseted IDLE "<< endl;
-		}else if (!i_reset.read() && i_clock.posedge() ) {
+		}else{
 			  switch (state.read()) {
 			  	  case 0:
 			  		  // Si hay un paquete listo (i_packetReady=1), leo los 9-bit lsb del dato en la salida de la FIFO
@@ -48,12 +49,12 @@ SC_MODULE(TX){
 			    	  next_state = 1;
 
 			    	  cout<<":: from S0:IDLE to S1:N_READ"<< endl;
-
-			    	  o_Req.write(0);
-			    	  o_SoP.write(0);
-			    	  o_fifo_pop.write(0);
-			    	  //count = i_fifo_dataOut.read().range(8,0);
-			    	  count = i_fifo_dataOut.read();
+//Comento las salidas de aquí y las actualizo en el método update
+//			    	  o_Req.write(0);
+//			    	  o_SoP.write(0);
+//			    	  o_fifo_pop.write(0);
+//			    	  //count = i_fifo_dataOut.read().range(8,0);
+//			    	  count = i_fifo_dataOut.read();
 
 			      } else {
 			          next_state = 0;}break;
@@ -65,10 +66,10 @@ SC_MODULE(TX){
 
 			    	  cout<<":: from S1:N_READ to S2:START OF TRANSMISSION"<< endl;
 
-			    	  count = count + 2;
-			    	  o_Req.write(1);
-			    	  o_SoP.write(1);
-			    	  o_fifo_pop.write(0);
+//			    	  count = count + 2;
+//			    	  o_Req.write(1);
+//			    	  o_SoP.write(1);
+//			    	  o_fifo_pop.write(0);
 			      } else {
 			          next_state = 1;}break;
 			      case 2:
@@ -78,10 +79,10 @@ SC_MODULE(TX){
 
 			    	  	cout<<":: from S2:START OF TRANSMISSION to S3:TRANSMITTING"<< endl;
 
-			    	  	o_Req.write(0);
-			    	  	o_SoP.write(0);
-			    	  	o_fifo_pop.write(0);
-			    	  	count--;
+//			    	  	o_Req.write(0);
+//			    	  	o_SoP.write(0);
+//			    	  	o_fifo_pop.write(0);
+//			    	  	count--;
 				      } else {
 				    	next_state = 2;}break;
 			      default:
@@ -91,9 +92,9 @@ SC_MODULE(TX){
 			    	  	next_state = 0;
 
 			    	  	cout<<":: from S3:TRANSMITTING to S0:IDLE"<< endl;
- 			    		 o_Req.write(0);
- 			    		 o_SoP.write(0);
- 			    		 o_fifo_pop.write(0);
+// 			    		 o_Req.write(0);
+// 			    		 o_SoP.write(0);
+// 			    		 o_fifo_pop.write(0);
 		    	 	 }
 			    	  // Si hay disponibilidad para enviar un flit (i_OnOff=1), pongo en 1 o_Req y o_fifo_pop, y pongo en 0  a o_SoP por que
 			    	  // ya no es un flit de inicio de paquete.
@@ -102,9 +103,9 @@ SC_MODULE(TX){
 
 			    	 	cout<<":: from S3:TRANSMITTING to S2::CURRENT TRANSMISSION"<< endl;
 
-			    	 	o_Req.write(1);
-			    	 	o_SoP.write(0);
-			    	 	o_fifo_pop.write(1);
+//			    	 	o_Req.write(1);
+//			    	 	o_SoP.write(0);
+//			    	 	o_fifo_pop.write(1);
 
 			    	 }
 			    	  //Si no hay disponibilidad de recibir un flit (i_OnOff=0) ó la FIFO tiene almenos un elemento(no está vacía).
@@ -117,10 +118,56 @@ SC_MODULE(TX){
 	void update() {		//State Update
 	    if (i_reset.read()) {
 	    	state = 0;
+	    	  o_Req.write(0);
+	    	  o_SoP.write(0);
+	    	  o_fifo_pop.write(0);
+	    	  count = 0;
 		} else if (i_clock.posedge()) {
 		    state = next_state;
+
+
+	    switch (next_state) {
+	         case 0:
+			      if (i_packetReady.read()) {
+			    	  o_Req.write(0);
+			    	  o_SoP.write(0);
+			    	  o_fifo_pop.write(0);
+			    	  count = i_fifo_dataOut.read();
+			      }
+	             break;
+	         case 1:
+			      if (i_OnOff.read()) {
+			    	  count = count + 2;
+			    	  o_Req.write(1);
+			    	  o_SoP.write(1);
+			    	  o_fifo_pop.write(0);
+			      }
+	             break;
+	         case 2:
+		    	  if (!i_OnOff.read()) {
+		    	  	o_Req.write(0);
+		    	  	o_SoP.write(0);
+		    	  	o_fifo_pop.write(0);
+		    	  	count--;
+		    	  }
+	             break;
+	         default:
+		    	  //Cuando la cuenta "count" sea 0, habré terminado de leer los flits del paquete incluyendo la cola(tail).
+		    	  if(count == 0){
+		    		 o_Req.write(0);
+		    		 o_SoP.write(0);
+		    		 o_fifo_pop.write(0);
+	    	 	 }
+		    	  // Si hay disponibilidad para enviar un flit (i_OnOff=1), pongo en 1 o_Req y o_fifo_pop, y pongo en 0  a o_SoP por que
+		    	  // ya no es un flit de inicio de paquete.
+		    	  else if ( i_OnOff.read() && !(i_fifo_empty.read()) ){
+		    	 	o_Req.write(1);
+		    	 	o_SoP.write(0);
+		    	 	o_fifo_pop.write(1);
+		    	 }break;
+	     }
 		}
-					}
+	}
 
 			    SC_CTOR(TX): //	Labeling ports
 			    	i_clock("i_clock"),					//Input: System Clock
@@ -134,8 +181,7 @@ SC_MODULE(TX){
 			    	o_fifo_pop("o_fifo_pop")			//Output: Remove an element from  FIFO
 			    {
 			        SC_METHOD(transition);
-			        sensitive << i_clock.pos() << state <<i_reset << i_packetReady << i_OnOff << i_fifo_empty;
-			        //sensitive << state << i_reset << i_packetReady << i_OnOff << i_fifo_empty;
+			        sensitive << i_clock.pos() << i_reset; // << state <<i_reset << i_packetReady << i_OnOff << i_fifo_empty;
 
 			        SC_METHOD(update);
 			        sensitive << i_clock.pos() << i_reset;

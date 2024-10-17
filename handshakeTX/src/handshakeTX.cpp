@@ -5,7 +5,7 @@
 // Copyright   : Your copyright notice
 // Description : Hello World in C++, Ansi-style
 //============================================================================
-#include "tx.h"
+#include "tx_moore.h"
 #include <iostream>
 #include "systemc.h"
 using namespace std;
@@ -46,8 +46,8 @@ int sc_main(int argc, char* argv[]) {
     		sc_trace(wf, o_SoP, "o_SoP");
     		sc_trace(wf, o_fifo_pop, "o_fifo_pop");
     		sc_trace(wf, transmitter.state, "state");
-    		sc_trace(wf, transmitter.next_state, "next_state");
     		sc_trace(wf, transmitter.count, "count");
+    		sc_trace(wf, transmitter.prev_OnOff, "prev_OnOff");
 
     		i_reset = 0;
     		i_packetReady = 0;
