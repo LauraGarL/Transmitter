@@ -1,5 +1,10 @@
 #ifndef TX_H_
 #define TX_H_
+// TODO LIST
+//paquetes seguidos
+//paquetes seguido y tiempo muerto
+// tiempo entre flits
+//
 
 #include <iostream>
 
@@ -54,7 +59,7 @@ SC_MODULE(TX){
 			    	  o_Req.write(0);
 			    	  o_SoP.write(0);
 			    	  o_fifo_pop.write(0);
-			    	  count = i_fifo_dataOut.read();
+			    	  count = i_fifo_dataOut.read();// Sumar desde aquí
 
 			    	  if (i_OnOff.read()) {
 			    	  state = 2;
