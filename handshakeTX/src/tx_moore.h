@@ -25,11 +25,11 @@ SC_MODULE(TX){
 	sc_out<bool> 					o_SoP;			//Output: Indicates the start of a packet
 	sc_out<bool> 					o_fifo_pop;		//Output: Remove an element from  FIFO
 
-	 sc_signal<int> state;
+	 sc_signal<int> state, prev_state;
 
 	 sc_int<9> count;
 
-	 sc_signal<bool> prev_OnOff;  // Señal para almacenar el valor anterior de i_OnOff
+//	 sc_signal<bool> prev_OnOff;  // Señal para almacenar el valor anterior de i_OnOff
 
 	void transition(){
 		if( i_reset.read() && i_clock.posedge()  ){
@@ -37,10 +37,15 @@ SC_MODULE(TX){
 			o_Req.write(0);
 			o_SoP.write(0);
 			o_fifo_pop.write(0);
-			prev_OnOff.write(0); //
+//			prev_OnOff.write(0); //
 			count = 0;
+			prev_state = 0;
 			cout<<"@"<< sc_time_stamp() <<":: Reseted IDLE "<< endl;
-		}else{
+		}else if(i_clock.posedge())// Aseguro que ocurra flanco positivo del reloj
+			{
+
+			prev_state = state;
+
 			  switch (state.read()) {
 			  	  case 0:
 						o_Req.write(0);
@@ -48,69 +53,61 @@ SC_MODULE(TX){
 						o_fifo_pop.write(0);
 						count = 0;
 
-			  		if (i_packetReady.read()) {
-			    	  state = 1;
-			    	  cout<<":: from S0:IDLE to S1:N_READ"<< endl;
+						if (i_packetReady.read()) {
+							state = 1;
+							cout<<":: from S0:IDLE to S1:N_READ"<< endl;
+						} else { state = 0;}break;
 
-			      } else {
-			          state = 0;}break;
-			      case 1:
-
+			  	  case 1:
 			    	  o_Req.write(0);
 			    	  o_SoP.write(0);
 			    	  o_fifo_pop.write(0);
-			    	  count = i_fifo_dataOut.read();// Sumar desde aquí
+			    	  count = i_fifo_dataOut.read() +2;//Agrego los dos flits restantes correspondientes a la cabecera y a la cola.
 
 			    	  if (i_OnOff.read()) {
-			    	  state = 2;
-			    	  cout<<":: from S1:N_READ to S2:START OF TRANSMISSION"<< endl;
+			    		  state = 2;
+			    		  cout<<":: from S1:N_READ to S2:START OF TRANSMISSION"<< endl;
+			    	  } else { state = 1;}break;
 
-
-			      } else {
-			          state = 1;}break;
 			      case 2:
-
-//			    	  count += 2;
 			    	  o_Req.write(1);
 			    	  o_SoP.write(1);
 			    	  o_fifo_pop.write(0);
 
 			    	  if (!i_OnOff.read()) {
-			    	  	state = 3;
-			    	  	count += 2;
-
-			    	  	cout<<":: from S2:START OF TRANSMISSION to S3:TRANSMITTING"<< endl;
-
-				      } else {
-   				    	 state = 2;
-				      }break;
+			    		  state = 3;
+			    		  cout<<":: from S2:START OF TRANSMISSION to S3:TRANSMITTING"<< endl;
+				      } else { state = 2;}break;
 
 			      case 3:
-			    	  	o_Req.write(0);
-			    	  	o_SoP.write(0);
-			    	  	o_fifo_pop.write(0);
-//			    	  	count--;
+			    	  o_Req.write(0);
+			    	  o_SoP.write(0);
+			    	  o_fifo_pop.write(0);
+
+	                  if (prev_state != 3) {
+	                      count--;
+	                      cout << ":: Count decremented in S3, from previous state: " << prev_state.read() << endl;
+	                  }
+
 			    	  //Cuando la cuenta "count" sea 0, habré terminado de leer los flits del paquete incluyendo la cola(tail).
-			    	  if(count == 0){//SUBIR
-			    	  	state = 0;
+			    	  if(count == 0){ state = 0;
+			    	  	  cout<<":: from S3:TRANSMITTING to S0:IDLE"<< endl;
+			    	  }
+			    	  else if (i_OnOff.read() && !(i_fifo_empty.read()) ) {
+			    	  	  	 	state = 4;
+			    	  	  	 	cout<<":: from S3:TRANSMITTING to S2::RECEIVED"<< endl;
 
-			    	  	cout<<":: from S3:TRANSMITTING to S0:IDLE"<< endl;
-		    	 	 }
-			    	  else if (!prev_OnOff.read() && i_OnOff.read() && !(i_fifo_empty.read()) ) {
-			    	 	state = 4;
-			    	 	cout<<":: from S3:TRANSMITTING to S2::RECEIVED"<< endl;
+			    	  }else { state = 3; }break;
 
-//			    	  	o_Req.write(0);
-//			    	  	o_SoP.write(0);
-//			    	  	o_fifo_pop.write(0);
-			    	  	count--;
-			    	  	prev_OnOff.write(i_OnOff.read());
-			    	 }
+// Condición que busca un cambio de flanco positivo para restar sólo una vez.
+//			    	  else if (!prev_OnOff.read() && i_OnOff.read() && !(i_fifo_empty.read()) ) {
+//			    	 	state = 4;
+//			    	 	cout<<":: from S3:TRANSMITTING to S2::RECEIVED"<< endl;
+//			    	  	count--;
+//			    	  	prev_OnOff.write(i_OnOff.read());
+//			    	 }
+
 			    	  //Si no hay disponibilidad de recibir un flit (i_OnOff=0) ó la FIFO tiene almenos un elemento(no está vacía).
-			    	 else
-			    	 {
-			    	    state = 3;
-			    	 }break;
 
 			      default:
 			    	 	o_Req.write(1);
@@ -122,15 +119,11 @@ SC_MODULE(TX){
 
 				    	  	cout<<":: from S2:RECEIVED to S3:TRANSMITTING"<< endl;
 
-
-					      } else {
-					    	state = 4;}break;
-			            	} // end switch
-
-			  prev_OnOff.write(i_OnOff.read());
-			        }// end else->reset
-		}// end transition
-
+					      } else { state = 4;}break;
+			  }// end switch
+//			  prev_OnOff.write(i_OnOff.read());
+			}// end else->reset
+	}// end transition
 
 			    SC_CTOR(TX): //	Labeling ports
 			    	i_clock("i_clock"),					//Input: System Clock

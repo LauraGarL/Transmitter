@@ -47,7 +47,7 @@ int sc_main(int argc, char* argv[]) {
     		sc_trace(wf, o_fifo_pop, "o_fifo_pop");
     		sc_trace(wf, transmitter.state, "state");
     		sc_trace(wf, transmitter.count, "count");
-    		sc_trace(wf, transmitter.prev_OnOff, "prev_OnOff");
+    		sc_trace(wf, transmitter.prev_state, "prev_state");
 
     		i_reset = 0;
     		i_packetReady = 0;
@@ -56,11 +56,11 @@ int sc_main(int argc, char* argv[]) {
     		i_fifo_dataOut = 0;
 
     		for(int i=0; i<2; i++){
-    					i_clock = 0;
-    					sc_start(10,SC_NS);
-    					i_clock = 1;
-    					sc_start(10,SC_NS);
-    				}
+    			i_clock = 0;
+    			sc_start(10,SC_NS);
+    			i_clock = 1;
+    			sc_start(10,SC_NS);
+    		}
 
     				i_packetReady = 0;
     		    	i_OnOff = 0;
@@ -145,14 +145,272 @@ int sc_main(int argc, char* argv[]) {
 					i_packetReady = 0;
 					i_OnOff = 0;
 					i_fifo_empty = 0;
+//Paquete 2
+
+					//Paquete listo y ya en la entrada i_fifo_dataOut
+				i_packetReady = 1;
+				i_OnOff = 0;
+				i_fifo_empty = 0;
+
+					for (int i=0; i<5; i++){
+						i_clock = 0;
+						sc_start(10,SC_NS);
+						i_clock = 1;
+						sc_start(10,SC_NS);
+					}
+					//Ya está disponible el receptor para recibir el paquete
+				i_packetReady = 0;
+				i_OnOff = 1;
+				i_fifo_empty = 0;
+
+					for (int i=0; i<6; i++){
+						i_clock = 0;
+						sc_start(10,SC_NS);
+						i_clock = 1;
+						sc_start(10,SC_NS);
+					}
+//
+		for(int i=0;i<6;i++){
+					// Cuando ya no esté disponible, decremento la cuenta en 1
+				i_packetReady = 0;
+				i_OnOff = 0;
+				i_fifo_empty = 0;
+
+					for (int i=0; i<6; i++){
+						i_clock = 0;
+						sc_start(10,SC_NS);
+						i_clock = 1;
+						sc_start(10,SC_NS);
+					}
+					// De nuevo está disponible y hago pop para acceder al siguiente flit de la fifo
+				i_packetReady = 0;
+				i_OnOff = 1;
+				i_fifo_empty = 0;
+				i_fifo_dataOut = 0x00000001 + i; //1 - 0000 0000 0001 //flit 1 de n+2=4+2=6
+					for (int i=0; i<4; i++){
+						i_clock = 0;
+						sc_start(10,SC_NS);
+						i_clock = 1;
+						sc_start(10,SC_NS);
+					}
+		}
+				i_packetReady = 0;
+				i_OnOff = 0;
+				i_fifo_empty = 0;
+
+				//Paquete 3
+
+									//Paquete listo y ya en la entrada i_fifo_dataOut
+								i_packetReady = 1;
+								i_OnOff = 0;
+								i_fifo_empty = 0;
+
+									for (int i=0; i<5; i++){
+										i_clock = 0;
+										sc_start(10,SC_NS);
+										i_clock = 1;
+										sc_start(10,SC_NS);
+									}
+									//Ya está disponible el receptor para recibir el paquete
+								i_packetReady = 0;
+								i_OnOff = 1;
+								i_fifo_empty = 0;
+
+									for (int i=0; i<6; i++){
+										i_clock = 0;
+										sc_start(10,SC_NS);
+										i_clock = 1;
+										sc_start(10,SC_NS);
+									}
+				//
+						for(int i=0;i<6;i++){
+									// Cuando ya no esté disponible, decremento la cuenta en 1
+								i_packetReady = 0;
+								i_OnOff = 0;
+								i_fifo_empty = 0;
+
+									for (int i=0; i<6; i++){
+										i_clock = 0;
+										sc_start(10,SC_NS);
+										i_clock = 1;
+										sc_start(10,SC_NS);
+									}
+									// De nuevo está disponible y hago pop para acceder al siguiente flit de la fifo
+								i_packetReady = 0;
+								i_OnOff = 1;
+								i_fifo_empty = 0;
+								i_fifo_dataOut = 0x00000001 + i; //1 - 0000 0000 0001 //flit 1 de n+2=4+2=6
+									for (int i=0; i<4; i++){
+										i_clock = 0;
+										sc_start(10,SC_NS);
+										i_clock = 1;
+										sc_start(10,SC_NS);
+									}
+						}
+								i_packetReady = 0;
+								i_OnOff = 0;
+								i_fifo_empty = 0;
+
+								//Paquete 4
+
+													//Paquete listo y ya en la entrada i_fifo_dataOut
+												i_packetReady = 1;
+												i_OnOff = 0;
+												i_fifo_empty = 0;
+
+													for (int i=0; i<5; i++){
+														i_clock = 0;
+														sc_start(10,SC_NS);
+														i_clock = 1;
+														sc_start(10,SC_NS);
+													}
+													//Ya está disponible el receptor para recibir el paquete
+												i_packetReady = 0;
+												i_OnOff = 1;
+												i_fifo_empty = 0;
+
+													for (int i=0; i<6; i++){
+														i_clock = 0;
+														sc_start(10,SC_NS);
+														i_clock = 1;
+														sc_start(10,SC_NS);
+													}
+								//
+										for(int i=0;i<8;i++){
+													// Cuando ya no esté disponible, decremento la cuenta en 1
+												i_packetReady = 0;
+												i_OnOff = 0;
+												i_fifo_empty = 0;
+
+													for (int i=0; i<6; i++){
+														i_clock = 0;
+														sc_start(10,SC_NS);
+														i_clock = 1;
+														sc_start(10,SC_NS);
+													}
+													// De nuevo está disponible y hago pop para acceder al siguiente flit de la fifo
+												i_packetReady = 0;
+												i_OnOff = 1;
+												i_fifo_empty = 0;
+												i_fifo_dataOut = 0x00000001 + i; //1 - 0000 0000 0001 //flit 1 de n+2=4+2=6
+													for (int i=0; i<4; i++){
+														i_clock = 0;
+														sc_start(10,SC_NS);
+														i_clock = 1;
+														sc_start(10,SC_NS);
+													}
+										}
+												i_packetReady = 0;
+												i_OnOff = 0;
+												i_fifo_empty = 0;
+
+//Paquete 5 Tiempo entre flits (fifo vacía)
+
+								//Paquete listo y ya en la entrada i_fifo_dataOut
+									i_packetReady = 1;
+									i_OnOff = 0;
+									i_fifo_empty = 0;
+
+									for (int i=0; i<5; i++){
+										i_clock = 0;
+										sc_start(10,SC_NS);
+										i_clock = 1;
+										sc_start(10,SC_NS);
+										}
+								//Ya está disponible el receptor para recibir el paquete
+									i_packetReady = 0;
+									i_OnOff = 1;
+									i_fifo_empty = 0;
+									for (int i=0; i<6; i++){
+										i_clock = 0;
+										sc_start(10,SC_NS);
+										i_clock = 1;
+										sc_start(10,SC_NS);
+										}
+
+									int limite=transmitter.count;
+									// primera parte de los flits
+									for(int i=0;i<limite-5;i++){
+										// Cuando ya no esté disponible, decremento la cuenta en 1
+										i_packetReady = 0;
+										i_OnOff = 0;
+										i_fifo_empty = 0;
+										// Ciclos de reloj
+										for (int i=0; i<6; i++){
+											i_clock = 0; sc_start(10,SC_NS);
+											i_clock = 1; sc_start(10,SC_NS);
+										}
+										// De nuevo está disponible y hago pop para acceder al siguiente flit de la fifo
+										i_packetReady = 0;
+										i_OnOff = 1;
+										i_fifo_empty = 0;
+										i_fifo_dataOut = 0x00000001 + i; //1 - 0000 0000 0001 //flit 1 de n+2=4+2=6
+
+										for (int i=0; i<8; i++){
+											i_clock = 0; sc_start(10,SC_NS);
+											i_clock = 1; sc_start(10,SC_NS);
+										}
+									}
+									// segunda parte de los flits
+									for(int i=0;i<limite-7;i++){
+										// Cuando ya no esté disponible, decremento la cuenta en 1
+										i_packetReady = 0;
+										i_OnOff = 0;
+										i_fifo_empty = 1;
+
+										// Ciclos de reloj
+										for (int i=0; i<4; i++){
+											i_clock = 0; sc_start(10,SC_NS);
+											i_clock = 1; sc_start(10,SC_NS);
+										}
+
+										// De nuevo está disponible y hago pop para acceder al siguiente flit de la fifo
+										i_packetReady = 0;
+										i_OnOff = 0;
+										i_fifo_empty = 1;
+
+
+										for (int i=0; i<8; i++){
+											i_clock = 0; sc_start(10,SC_NS);
+											i_clock = 1; sc_start(10,SC_NS);
+										}
+
+										i_OnOff = 0;
+										i_fifo_empty = 1;
+
+									}
+									// tercera parte de los flits
+									for(int i=0;i<limite-5;i++){
+										// Cuando ya no esté disponible, decremento la cuenta en 1
+										i_packetReady = 0;
+										i_OnOff = 0;
+										i_fifo_empty = 0;
+										// Ciclos de reloj
+										for (int i=0; i<6; i++){
+											i_clock = 0; sc_start(10,SC_NS);
+											i_clock = 1; sc_start(10,SC_NS);
+										}
+										// De nuevo está disponible y hago pop para acceder al siguiente flit de la fifo
+										i_packetReady = 0;
+										i_OnOff = 1;
+										i_fifo_empty = 0;
+										i_fifo_dataOut = 0x00000001 + i; //1 - 0000 0000 0001 //flit 1 de n+2=4+2=6
+
+										for (int i=0; i<8; i++){
+											i_clock = 0; sc_start(10,SC_NS);
+											i_clock = 1; sc_start(10,SC_NS);
+										}
+									}
+
+
+						i_packetReady = 0;
+						i_OnOff = 0;
+						i_fifo_empty = 0;
 
 						for (int i=0; i<6; i++){
-							i_clock = 0;
-							sc_start(10,SC_NS);
-							i_clock = 1;
-							sc_start(10,SC_NS);
+							i_clock = 0; sc_start(10,SC_NS);
+							i_clock = 1; sc_start(10,SC_NS);
 						}
-
 
 cout << "@" << sc_time_stamp() << "Terminating simulation" << endl;
 sc_close_vcd_trace_file(wf);
