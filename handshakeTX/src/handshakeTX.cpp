@@ -46,6 +46,7 @@ int sc_main(int argc, char* argv[]) {
     		sc_trace(wf, o_SoP, "o_SoP");
     		sc_trace(wf, o_fifo_pop, "o_fifo_pop");
     		sc_trace(wf, transmitter.state, "state");
+    		//sc_trace(wf, transmitter.next_state, "next_state");
     		sc_trace(wf, transmitter.count, "count");
     		sc_trace(wf, transmitter.prev_state, "prev_state");
 
@@ -100,7 +101,7 @@ int sc_main(int argc, char* argv[]) {
     				i_OnOff = 0;
     				i_fifo_empty = 0;
 
-						for (int i=0; i<5; i++){
+						for (int i=0; i<1; i++){
 							i_clock = 0;
 							sc_start(10,SC_NS);
 							i_clock = 1;
@@ -111,7 +112,7 @@ int sc_main(int argc, char* argv[]) {
 					i_OnOff = 1;
 					i_fifo_empty = 0;
 
-						for (int i=0; i<6; i++){
+						for (int i=0; i<1; i++){
 							i_clock = 0;
 							sc_start(10,SC_NS);
 							i_clock = 1;
